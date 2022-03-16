@@ -4,15 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       service_account:
-        description: 'The Google Cloud service account for which to generate credentials'
+        description: 'Service account name'
         required: true
         type: string
       workload_identity_provider:
-        description: 'The full identifier of the Workload Identity Provider, including the project number, pool name, and provider name'
+        description: 'Workload Identity Provider identifier'
         required: true
         type: string
       source_document_id:
-        description: 'ID of the source document'
+        description: 'Source document ID'
         required: true
         type: string
 
