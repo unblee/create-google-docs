@@ -1,19 +1,26 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import {google} from 'googleapis'
 
-async function run(): Promise<void> {
-  try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+export async function run(): Promise<void> {
+  const docs = google.docs({version: 'v1', auth: core.getInput('access_token')})
+  const documentId = core.getInput('source_document_id')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+  const res = await docs.documents.get({documentId})
+  if (res.status !== 200) {
+    core.setFailed(
+      `failed to get doc. status:${res.statusText}, documentId:${documentId}`
+    )
+    return
   }
+
+  const docBody = res.data.body?.content
+  if (docBody) {
+    for (const el of docBody) {
+      core.setOutput('response data body content', el)
+    }
+  }
+
+  return
 }
 
 run()
