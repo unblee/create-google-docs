@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import {google} from 'googleapis'
 
-async function run(): Promise<void> {
+export async function run(): Promise<void> {
   const docs = google.docs({version: 'v1', auth: core.getInput('access_token')})
   const documentId = core.getInput('source_document_id')
 
