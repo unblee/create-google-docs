@@ -2,19 +2,6 @@ name: E2E test
 
 on:
   workflow_dispatch:
-    inputs:
-      service_account:
-        description: 'Service account name'
-        required: true
-        type: string
-      workload_identity_provider:
-        description: 'Workload Identity Provider identifier'
-        required: true
-        type: string
-      source_document_id:
-        description: 'Source document ID'
-        required: true
-        type: string
 
 jobs:
   copy-doc-from-template:
@@ -27,12 +14,13 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v0
         with:
-          workload_identity_provider: ${{ github.event.inputs.workload_identity_provider }}
-          service_account: ${{ github.event.inputs.service_account }}
+          workload_identity_provider: ${{ secrets.E2E_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.E2E_SERVICE_ACCOUNT }}
           token_format: access_token
           access_token_scopes: https://www.googleapis.com/auth/documents,https://www.googleapis.com/auth/drive.file
           access_token_lifetime: 300s
-      - uses: ./
-        with:
-          access_token: ${{ steps.auth.outputs.access_token }}
-          source_document_id: ${{ github.event.inputs.source_document_id }}
+      - run: |
+          npm run e2e
+        env:
+          E2E_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          E2E_SOURCE_DOCUMENT_ID: ${{ secrets.E2E_SOURCE_DOCUMENT_ID }}
