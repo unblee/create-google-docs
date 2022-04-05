@@ -21,6 +21,16 @@ jobs:
           token_format: access_token
           access_token_scopes: https://www.googleapis.com/auth/documents,https://www.googleapis.com/auth/drive.file
           access_token_lifetime: 300s
+
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
       - run: |
           npm run e2e
         env:
